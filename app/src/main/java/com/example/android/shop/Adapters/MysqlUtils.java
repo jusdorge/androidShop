@@ -42,16 +42,13 @@ public class MysqlUtils {
             ErrorCause.add(ex.toString());
             ErrorNumber.add(0);
             ErrorMessage.add("le pilote de la base de donnée ne peut être trouvé.");
-            //System.err.println(ErrorMessage.get(0));
             System.err.println(ex);
         }catch (SQLException e) {
             ErrorExists = true;
             ErrorCause.add(e.toString());
             ErrorNumber.add(e.getErrorCode());
             ErrorMessage.add("Connexion a la base de donnée impossible.");
-            //System.err.println(ErrorNumber.get(1));
-            //System.err.println(ErrorMessage.get(1));
-            //System.err.println(e.toString() + e.getErrorCode());
+            System.err.println(e.toString() );
         }
     }
 
@@ -136,7 +133,6 @@ public class MysqlUtils {
             ErrorMessage.add("la requete ne peut être executer");
             ErrorExists = true;
             System.err.println(query);
-            //System.err.println(ErrorMessage.get(0));
             System.err.println(ex);
         }
     }
