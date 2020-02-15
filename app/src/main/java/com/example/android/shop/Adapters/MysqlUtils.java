@@ -22,37 +22,45 @@ public class MysqlUtils {
     private ResultSetMetaData metaData;
     private boolean editableTable = true;
     private boolean ErrorExists = false;
-    private String ErrorMessage = "";
-    private String ErrorCause = "";
-    private int ErrorNumber;
+    private ArrayList<String> ErrorMessage = new ArrayList<String>();
+    private ArrayList<String> ErrorCause = new ArrayList<String>();
+    private ArrayList<Integer> ErrorNumber = new ArrayList<Integer>();
 
     public MysqlUtils(String url, String driverName,
                       String user, String passwd) {
         try {
+
+            System.out.println("the url is : " + url);
+            System.out.println("driver Name : " + driverName);
             Class.forName(driverName);
             connection = DriverManager.getConnection(url, user, passwd);
             statement = connection.createStatement();
+            ErrorExists = false;
         }catch (ClassNotFoundException ex) {
+            System.out.println("the url is : " + url);
             ErrorExists = true;
-            ErrorCause = ex.toString();
-            ErrorNumber = 0;
-            System.err.println("le pilote de la base de donnée ne peut être trouvé.");
+            ErrorCause.add(ex.toString());
+            ErrorNumber.add(0);
+            ErrorMessage.add("le pilote de la base de donnée ne peut être trouvé.");
+            //System.err.println(ErrorMessage.get(0));
             System.err.println(ex);
-        }catch (SQLException ex) {
+        }catch (SQLException e) {
             ErrorExists = true;
-            ErrorCause = ex.toString();
-            ErrorNumber = ex.getErrorCode();
-            System.err.println(ErrorNumber);
-            System.err.println("Connexion a la base de donnée impossible.");
-            System.err.println(ex.toString() + ex.getErrorCode());
+            ErrorCause.add(e.toString());
+            ErrorNumber.add(e.getErrorCode());
+            ErrorMessage.add("Connexion a la base de donnée impossible.");
+            //System.err.println(ErrorNumber.get(1));
+            //System.err.println(ErrorMessage.get(1));
+            //System.err.println(e.toString() + e.getErrorCode());
         }
     }
 
     /**
-     * Estabilish a connection with the specified params
-     * @return
+     * Estabiish a connection with the specified params
+     * @return a connection of type MysqlUtils
      */
     public static MysqlUtils connect(){
+        System.out.println(Utilities.URL);
         MysqlUtils result = new MysqlUtils( Utilities.URL,
                                             Utilities.DRIVER_NAME,
                                             Utilities.USER,
@@ -123,15 +131,26 @@ public class MysqlUtils {
 
             ErrorExists = false;
         } catch (SQLException ex) {
-            ErrorNumber = ex.getErrorCode();
-            ErrorCause = ex.toString();
-            ErrorMessage = "la requete ne peut être executer";
+            ErrorNumber.add(ex.getErrorCode());
+            ErrorCause.add(ex.toString());
+            ErrorMessage.add("la requete ne peut être executer");
             ErrorExists = true;
             System.err.println(query);
-            System.err.println(ErrorMessage);
+            //System.err.println(ErrorMessage.get(0));
             System.err.println(ex);
         }
     }
+
+    public boolean doesErrorExists(){
+            return ErrorExists;
+    }
+    public ArrayList<String> getErrorCause(){
+            return ErrorCause;
+    }
+    public ArrayList<Integer> getErrorNumber() {
+        return ErrorNumber;
+    }
+    public ArrayList<String> getErrorMessage(){ return ErrorMessage; }
 
     public void print(){
         System.out.println("row X column : (" + getRowCount() +
